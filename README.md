@@ -22,9 +22,18 @@
 
 ## Database Tables
 
-- Table `users` - contains xx yy zz
-- Table `something` - contains ww qq ss
-- ...
+- Table `user` - contains userId, name, surname, email, password, salt, planType
+- Table `course` - contains courseCode, name, credits, maxStudents, preparatoryCourse
+- Table `incompatibility` - contains courseCode1, courseCode2
+- Table `studyplan` - contains studentId, courseCode
+
+## Data Models
+- User
+- Course
+
+## API endpoints
+- GET /api/courses
+- GET /api/students
 
 ## Main React Components
 
