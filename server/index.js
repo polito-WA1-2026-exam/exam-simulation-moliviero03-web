@@ -7,7 +7,7 @@ import passport from "passport";
 import LocalStrategy from 'passport-local';
 import session from 'express-session';
 
-import { listCourses, getUser } from "./dao.js";
+import { listCourses, getUser, listPlan } from "./dao.js";
 
 // init express
 const app = express();
@@ -24,7 +24,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions))
 
-passport.use(new LocalStrategy(async function verify(email, password, cb){
+passport.use(new LocalStrategy({ usernameField: 'email' }, async function verify(email, password, cb){
   const user = await getUser(email, password);
 
   if (!user)
@@ -37,7 +37,7 @@ passport.serializeUser(function (user, cb){
   cb(null, user);
 });
 
-passport.deserializeUser(function (use, cb){
+passport.deserializeUser(function (user, cb){
   return cb(null, user);
 });
 
@@ -78,6 +78,10 @@ app.delete("/api/sessions/current", (req, res) => {
 
 app.get("/api/courses", (req, res) => {
   listCourses().then(courses => res.json(courses)).catch(() => res.status(500).end());
+});
+
+app.get("/api/plan", isLoggedIn, (req, res) => {
+  listPlan(req.user.id).then(courses => res.json(courses)).catch(() => res.status(500).end());
 });
 
 // activate the server

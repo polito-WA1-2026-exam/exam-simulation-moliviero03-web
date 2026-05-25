@@ -12,8 +12,8 @@ function Course(code, name, credits, max_students, preparatory, enrolled, incomp
     this.credits = credits;
     this.maxStudents = max_students === null ? null : max_students;
     this.preparatory = preparatory === null ? null : preparatory;
-    this.incopatible = incompatible || [];
-    this.enrolled = enrolled === undefined ? 0 : undefined;
+    this.incompatible = incompatible || [];
+    this.enrolled = enrolled === undefined ? 0 : enrolled;
 }
 
 export {Student, Course}

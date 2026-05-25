@@ -35,8 +35,8 @@ export const listCourses = () => {
             else{
                 try{
                     const promises = rows.map(async (c) => 
-                        new Course(c.courseCode, c.name, c.surname,
-                            c.maxStudents, c.preparatory, c.enrolled,
+                        new Course(c.courseCode, c.name, c.credits,
+                            c.maxStudents, c.preparatoryCourse, c.enrolled,
                         await getIncompatibilities(c.courseCode)));
 
                     const courses = await Promise.all(promises);
@@ -80,7 +80,7 @@ export const listPlan = (studentId) => {
                     const planCourses = rows.map((pc) => pc.courseCode);
                     const courses = await listCourses();
                     const filteredCourses = courses.filter((c) => planCourses.includes(c.courseCode));
-                    resolve(courses)
+                    resolve(filteredCourses)
                 }
                 catch (error){
                     reject(error);
@@ -102,9 +102,9 @@ export const getUser = (email, password) => {
         resolve(false); 
       }
       else {
-        const user = {id: row.id, email: row.email, name: row.name, surname: row.surname, typeOfOplan: row.planType};
+        const user = {id: row.userId, email: row.email, name: row.name, surname: row.surname, typeOfOplan: row.planType};
         
-        crypto.scrypt(password, row.salt, 16, function(err, hashedPassword) {
+        crypto.scrypt(password, row.salt, 64, function(err, hashedPassword) {
           if (err) reject(err);
           if(!crypto.timingSafeEqual(Buffer.from(row.password, "hex"), hashedPassword))
             resolve(false);

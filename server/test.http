@@ -1,0 +1,39 @@
+# Bad login
+POST http://localhost:3001/api/sessions
+content-type: application/json
+
+{
+    "email": "mario.rossi@gmail.com",
+    "password": "wrong_password"
+}
+
+###
+
+# Good login
+POST http://localhost:3001/api/sessions
+content-type: application/json
+
+{
+    "email": "luca.verdi@gmail.com",
+    "password": "password_di_luca"
+}
+
+###
+
+# Logout
+DELETE http://localhost:3001/api/sessions/current
+
+###
+
+# Rebuild session
+GET http://localhost:3001/api/sessions/current
+
+###
+
+# List courses
+GET http://localhost:3001/api/courses
+
+###
+
+# List plan
+GET http://localhost:3001/api/plan
