@@ -14,8 +14,8 @@ POST http://localhost:3001/api/sessions
 content-type: application/json
 
 {
-    "email": "luca.verdi@gmail.com",
-    "password": "password_di_luca"
+    "email": "andrea.bianchi@gmail.com",
+    "password": "password_di_andrea"
 }
 
 ###
@@ -37,3 +37,36 @@ GET http://localhost:3001/api/courses
 
 # List plan
 GET http://localhost:3001/api/plan
+
+###
+
+# Create Plan
+POST http://localhost:3001/api/plan
+content-type: application/json
+
+{
+    "planType": "partTime",
+    "courses": [
+        "01SQOOV",
+        "01TYDOV"
+    ]
+}
+
+###
+
+# Update Plan
+PUT http://localhost:3001/api/plan
+content-type: application/json
+
+{
+    "planType": "fullTime",
+    "courses": [
+        "01SQOOV",
+        "03UEWOV"
+    ]
+}
+
+###
+
+# Delete Plan
+DELETE http://localhost:3001/api/plan

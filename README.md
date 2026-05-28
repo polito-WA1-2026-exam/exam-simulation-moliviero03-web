@@ -32,8 +32,27 @@
 - Course
 
 ## API endpoints
+- GET /api/sessions/current
 - GET /api/courses
-- GET /api/students
+- GET /api/plan
+
+- PUT /api/plan
+  is authenticated
+  requested body:
+  {
+    "planType": fullTime / partTime
+    "courses": [...]
+  }
+
+- POST /api/plan
+  is authenticated
+  requested body:
+  {
+    "planType": fullTime / partTime
+    "courses": [...]
+  }
+
+- DELETE /api/plan
 
 ## Main React Components
 

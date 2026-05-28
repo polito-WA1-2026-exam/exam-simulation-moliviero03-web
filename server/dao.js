@@ -1,6 +1,7 @@
 import sqlite3 from "sqlite3"
 import crypto from "crypto"
 import { Student, Course } from "./Modules.js"
+import { stderr } from "process";
 
 const db = new sqlite3.Database("database.sqlite", (err) => {
     if (err) throw err;
@@ -16,6 +17,47 @@ const getIncompatibilities = (courseCode) => {
             else{
                 const incompatibilities = rows.map((i) => i.courseCode2);
                 resolve(incompatibilities);
+            }
+        })
+    })
+}
+
+export const getStudent = (studentId) => {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT user.* FROM user WHERE userId = ?`;
+        db.get(sql, [studentId], (err, row) => {
+            if (err){
+                reject(err);
+            }
+            else if (row !== undefined){
+                resolve(new Student(row.userId, row.name, row.surname, row.email, row.planType));
+            }
+            else{
+                resolve({error: "Student not found"});
+            }
+        })
+    })
+}
+
+export const getCourse = (courseCode) => {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT course.* FROM course WHERE courseCode = ?`;
+        db.get(sql, [courseCode], async (err, row) => {
+            if (err){
+                reject(err);
+            }
+            else if (row !== undefined){
+                try{
+                    resolve (new Course(c.courseCode, c.name, c.credits,
+                                c.maxStudents, c.preparatoryCourse, c.enrolled,
+                            await getIncompatibilities(c.courseCode)));
+                }
+                catch(error){
+                    reject(error);
+                }
+            }
+            else{
+                resolve({error: "Course not found"});
             }
         })
     })
@@ -86,8 +128,53 @@ export const listPlan = (studentId) => {
                     reject(error);
                 }
             }
-        })
+        });
         
+    });
+}
+
+export const updatePlanType = (studentId, planType) => {
+    return new Promise((resolve, reject) => {
+        const sql = `UPDATE user SET planType = ? WHERE userId = ?`;
+        db.run(sql, [planType, studentId], function (err) {
+            if (err){
+                reject(err);
+            }
+            else{
+                //console.log("Plan updated");
+                resolve();
+            }
+        });
+    });
+}
+
+export const addCourseToPlan = (studentId, courseCode) => {
+    return new Promise((resolve, reject) => {
+        const sql = `INSERT INTO studyPlan(studentId, courseCode) VALUES (?,?)`;
+        db.run(sql, [studentId, courseCode], function (err) {
+            if (err){
+                reject(err);
+            }
+            else{
+                //console.log("Course added");
+                resolve();
+            }
+        });
+    });
+}
+
+export const deletePlan = (studentId) => {
+    return new Promise((resolve, reject) => {
+        const sql = `DELETE FROM studyPlan WHERE studentId = ?`;
+        db.run(sql, [studentId], function (err) {
+            if (err){
+                reject(err);
+            }
+            else{
+                //console.log("Plan deleted");
+                resolve();
+            }
+        })
     })
 }
 

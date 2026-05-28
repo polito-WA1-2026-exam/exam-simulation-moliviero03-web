@@ -7,7 +7,7 @@ import passport from "passport";
 import LocalStrategy from 'passport-local';
 import session from 'express-session';
 
-import { listCourses, getUser, listPlan } from "./dao.js";
+import { listCourses, getUser, listPlan, updatePlanType, addCourseToPlan, deletePlan } from "./dao.js";
 
 // init express
 const app = express();
@@ -83,6 +83,43 @@ app.get("/api/courses", (req, res) => {
 app.get("/api/plan", isLoggedIn, (req, res) => {
   listPlan(req.user.id).then(courses => res.json(courses)).catch(() => res.status(500).end());
 });
+
+app.put("/api/plan", isLoggedIn, async (req, res) => {
+  try{
+    await deletePlan(req.user.id);
+    await updatePlanType(req.user.id, req.body.planType);
+    for (let cc of req.body.courses){
+      await addCourseToPlan(req.user.id, cc);
+    }
+    res.status(200).end();
+  }
+  catch (error) {
+    res.status(503).json({"error": "Impossible to update plan"});
+  }
+})
+
+app.post("/api/plan", isLoggedIn, async (req, res) => {
+  try{
+    await updatePlanType(req.user.id, req.body.planType);
+    for (let cc of req.body.courses){
+      await addCourseToPlan(req.user.id, cc);
+    }
+    res.status(200).end();
+  }
+  catch (error) {
+    res.status(503).json({"error": "Impossible to create plan"});
+  }
+})
+
+app.delete("/api/plan", isLoggedIn, async (req, res) => {
+  try{
+    await deletePlan(req.user.id);
+    res.status(200).end();
+  }
+  catch (error){
+    res.status(503).json({"error": "Impossible to delete plan"});
+  }
+})
 
 // activate the server
 app.listen(port, () => {
